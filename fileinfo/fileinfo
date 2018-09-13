@@ -1,0 +1,37 @@
+#!/bin/bash
+# Last edit Sun Sep 9 19:33:35 CST 2018
+# Let's look up a file extension from fileinfo.com!
+for i in "$@"
+do
+	if [ -z "$1" ]										#Check to see if the user submitted an argument for the filetype
+	then											#If they don't submit an argument
+		read -rp "What filetype extension would you like to look up? " EXTENSION	#Ask the user for a filetype
+	else
+		EXTENSION="$1"									#If the user provided an argument, assign it to the EXTENSION variable
+	fi
+
+	#Check to see if we already have that extension in our filetypes directory
+	if [ -e filetypes/"$EXTENSION" ]							#Does it exist?
+	then											#If it does ...
+		#echo "Filetype "$EXTENSION" exists in database : "
+		cat filetypes/"$EXTENSION"							#Print the description from the filetypes directory
+		DESCRIPTION=$(cat filetypes/"$EXTENSION")
+	else
+
+	#Grab the relevant page from fileinfo.com
+		wget https://fileinfo.com/extension/"$EXTENSION" -O filetypes/"$EXTENSION" 2&>/tmp/fileinfo-wget-"$EXTENSION"
+		DESCRIPTION=$(cat filetypes/"$EXTENSION" | grep description\"\> | sed s/'<p><span itemprop="description">'/$NULL/)
+		echo "$DESCRIPTION"
+		echo "$DESCRIPTION" > filetypes/"$EXTENSION"
+	fi
+
+	#DEBUG OUTPUT BEGIN
+	#echo "Debug output:"
+	#echo '$DESCRIPTION'="$DESCRIPTION"
+	#echo '$EXTENSION'="$EXTENSION"
+	#DEBUG OUTPUT END
+
+	#cat "$DESCRIPTION" | grep \<\/span\>
+	#sed s/'</span>'/$NULL/"$DESCRIPTION"
+	shift
+done
