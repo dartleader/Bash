@@ -1,0 +1,101 @@
+#!/bin/bash
+#Program to rip a DVD to computer, delete extraneous files, convert the DVD to .mkv format, and rsync it to main computer.
+
+#Variable to contain 
+ADDRESS=192.168.0.105:"$HOME"/Videos/Incoming
+
+#Function to get the information off the DVD and save it to a variable
+getInfo()
+{
+	TEMP=$(dvdbackup --info)
+	echo "$TEMP" > "/tmp/DVD-ripper-$(date)"
+	TITLE=$(cat "/tmp/DVD-ripper-$(date)" | grep title\ \")
+	echo "$TITLE"
+
+	#Test which checks if the DVD drive was empty
+	if [ -z "$TITLE" ]
+	then
+		echo "No disc in DVD drive!"
+		exit 1
+	fi
+}
+
+#Function to strip the extraneous text from the TITLE variable
+stripTitle()
+{
+	#echo "Entire string:"
+	#echo "$TITLE"
+	#echo "Stripped:"
+ 	TITLE="${TITLE#DVD-Video\ information\ of\ the\ DVD\ with\ title\ \"}"
+	TITLE="${TITLE%\"}"
+	echo "$TITLE"
+}
+
+#Function to rip the disc now that we have a title
+ripDisc()
+{
+	echo "Ripping ""$TITLE"" to disk."
+	rm -rf /tmp/"$TITLE"					#Remove any data from previous rip attempts
+	dvdbackup --feature --progress --output=/tmp/
+	if [ $? -ne 0 ]
+	then
+		echo "Failed ripping!"
+		exit 1
+	fi
+}
+
+#Function to delete garbage files (BUP, IFO, VTS_??_0.VOB)
+deleteGarbage()
+{
+	WORKING_DIR=/tmp/"$TITLE""/VIDEO_TS"
+	for i in "$WORKING_DIR"/*.{BUP,IFO}
+	do
+		rm "$i" 2&>/dev/null
+	done
+	for i in "$WORKING_DIR"/VTS_??_0.VOB
+	do
+		rm "$i" 2&>/dev/null
+	done
+	echo "Successfully deleted garbage files!"
+}
+
+#Function to concatenate the remaining VOB files into one big VOB file
+catVOB()
+{
+	rm "$WORKING_DIR"/"$TITLE.VOB"	#Remove any concatenated files from previous attempts
+	for i in "$WORKING_DIR"
+	do
+		cat "$WORKING_DIR"/*.VOB > "$WORKING_DIR"/"$TITLE.VOB"
+	done
+	echo "Successfully concatenated individual VOB files!"
+}
+
+#Function to convert one big VOB file into mkv format
+convertVOB()
+{
+	if [ -e "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv ]
+	then
+		rm "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
+	fi
+	mkdir "$HOME"/Ripped-DVDs/"$TITLE"
+	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
+
+	echo "Ripped ""$TITLE"" successfully in ""$SECONDS"" seconds!"
+}
+
+#Function to rsync the newly converted .mkv file to main computer
+sendToMain()
+{
+	rsync -havP "$HOME"/Ripped-DVDs/"$TITLE" "$ADDRESS"/"$TITLE" 
+	if [ -z "$?" ]
+	then
+		echo Successfully rsync\'d to "$ADDRESS".
+	fi
+}
+getInfo
+stripTitle
+ripDisc
+deleteGarbage
+catVOB
+convertVOB
+sendToMain
