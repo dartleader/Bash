@@ -1,7 +1,7 @@
 #!/bin/bash
 #Program to rip a DVD to computer, delete extraneous files, convert the DVD to .mkv format, and rsync it to main computer.
 
-#Variable to contain 
+#Variable to contain address of target computer.
 ADDRESS=192.168.0.105:"$HOME"/Videos/Incoming
 
 #Function to get the information off the DVD and save it to a variable
