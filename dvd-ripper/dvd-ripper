@@ -1,5 +1,9 @@
 #!/bin/bash
 #Program to rip a DVD to computer, delete extraneous files, convert the DVD to .mkv format, and rsync it to main computer.
+#NOTE: 	Requires dvdbackup, ffmpeg and libdvdcss installed! Please consult:
+#	dvdbackup.sourceforge.net
+#	https://ffmpeg.org
+#	https://www.videolan.org/developers/libdvdcss.html
 
 #Variable to contain address of target computer.
 ADDRESS=192.168.0.105:"$HOME"/Videos/Incoming
