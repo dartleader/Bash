@@ -81,7 +81,7 @@ convertVOB()
 	then
 		rm "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 	fi
-	mkdir "$HOME"/Ripped-DVDs/"$TITLE"
+	mkdir -p "$HOME"/Ripped-DVDs/"$TITLE"
 	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 
 	echo "Ripped ""$TITLE"" successfully in ""$SECONDS"" seconds!"
