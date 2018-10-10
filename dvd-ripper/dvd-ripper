@@ -30,11 +30,6 @@ stripTitle()
  	TITLE="${TITLE#DVD-Video\ information\ of\ the\ DVD\ with\ title\ \"}"
 	TITLE="${TITLE%\"}"
 	#echo "$TITLE"		#For debug
-	if [ ! -e $TITLE ]
-	then
-		echo "Unable to rip title!"
-		exit 1
-	fi
 }
 
 #Function to rip the disc now that we have a title
