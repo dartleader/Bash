@@ -38,6 +38,7 @@ ripDisc()
 	echo "Ripping ""$TITLE"" to disk."
 	rm -rf /tmp/"$TITLE"					#Remove any data from previous rip attempts
 	dvdbackup --feature --progress --output=/tmp/
+	eject
 	if [ $? -ne 0 ]
 	then
 		echo "Failed ripping!"
@@ -78,7 +79,7 @@ convertVOB()
 	then
 		rm "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 	fi
-	mkdir -p "$HOME"/Ripped-DVDs/"$TITLE"
+	mkdir --parents "$HOME"/Ripped-DVDs/"$TITLE"
 	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 
 	echo "Ripped ""$TITLE"" successfully in ""$SECONDS"" seconds!"
@@ -87,7 +88,7 @@ convertVOB()
 #Function to rsync the newly converted .mkv file to main computer
 sendToMain()
 {
-	rsync -havP "$HOME"/Ripped-DVDs/"$TITLE" "$ADDRESS"/"$TITLE" 
+	rsync --human-readable --archive --verbose --partial --progress "$HOME"/Ripped-DVDs/"$TITLE" "$ADDRESS"/"$TITLE" 
 	if [ -z "$?" ]
 	then
 		echo Successfully rsync\'d to "$ADDRESS".
