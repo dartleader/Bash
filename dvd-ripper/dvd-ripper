@@ -14,7 +14,7 @@ getInfo()
 	TEMP=$(dvdbackup --info)
 	echo "$TEMP" > "/tmp/DVD-ripper-$(date)"
 	TITLE=$(cat "/tmp/DVD-ripper-$(date)" | grep title\ \")
-	echo "$TITLE"
+	#echo "$TITLE"		#For debug
 
 	#Test which checks if the DVD drive was empty
 	if [ -z "$TITLE" ]
@@ -27,9 +27,9 @@ getInfo()
 #Function to strip the extraneous text from the TITLE variable
 stripTitle()
 {
- 	TITLE="${TITLE#DVD-Video\ information\ of\ the\ DVD\ with\ title\ \"}"
-	TITLE="${TITLE%\"}"
-	#echo "$TITLE"		#For debug
+ 	TITLE="${TITLE:45}"	#The title always seems to follow the 45th character
+	TITLE="${TITLE%\"}"	#And we'll strip the closing " off of the title string.
+	echo "$TITLE"		#For debug
 }
 
 #Function to rip the disc now that we have a title
@@ -38,11 +38,13 @@ ripDisc()
 	echo "Ripping ""$TITLE"" to disk."
 	rm -rf /tmp/"$TITLE"					#Remove any data from previous rip attempts
 	dvdbackup --feature --progress --output=/tmp/
-	eject
+	#eject
 	if [ $? -ne 0 ]
 	then
 		echo "Failed ripping!"
 		exit 1
+	else
+		eject		#This used to be on line 41; trying to add it to an if statement to only eject if rip successful
 	fi
 }
 
@@ -80,7 +82,7 @@ convertVOB()
 		rm "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 	fi
 	mkdir --parents "$HOME"/Ripped-DVDs/"$TITLE"
-	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
+	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv 2>/tmp/"$TITLE"-ffmpeg-error.txt 1>/tmp/"$TITLE"-ffmpeg-log.txt
 
 	echo "Ripped ""$TITLE"" successfully in ""$SECONDS"" seconds!"
 }
@@ -101,3 +103,4 @@ deleteGarbage
 catVOB
 convertVOB
 sendToMain
+exit 0
