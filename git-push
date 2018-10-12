@@ -1,2 +1,2 @@
 #!/bin/bash
-git push https://github.com/dartleader/bash master
+git push https://dartleader@github.com/dartleader/bash master
