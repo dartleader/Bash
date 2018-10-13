@@ -82,6 +82,7 @@ convertVOB()
 		rm "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv
 	fi
 	mkdir --parents "$HOME"/Ripped-DVDs/"$TITLE"
+	echo "Converting VOB file to mkv!"
 	ffmpeg -i "$WORKING_DIR"/"$TITLE.VOB" -q 0 "$HOME"/Ripped-DVDs/"$TITLE"/"$TITLE".mkv 2>/tmp/"$TITLE"-ffmpeg-error.txt 1>/tmp/"$TITLE"-ffmpeg-log.txt
 
 	echo "Ripped ""$TITLE"" successfully in ""$SECONDS"" seconds!"
