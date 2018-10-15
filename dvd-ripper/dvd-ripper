@@ -91,7 +91,7 @@ convertVOB()
 #Function to rsync the newly converted .mkv file to main computer
 sendToMain()
 {
-	rsync --human-readable --archive --partial --progress "$HOME"/Ripped-DVDs/"$TITLE" "$ADDRESS"/"$TITLE" 
+	rsync --human-readable --archive --partial "$HOME"/Ripped-DVDs/"$TITLE" "$ADDRESS"/"$TITLE" 
 	if [ -z "$?" ]
 	then
 		echo Successfully rsync\'d to "$ADDRESS".
