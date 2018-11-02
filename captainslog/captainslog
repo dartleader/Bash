@@ -6,11 +6,14 @@ recordEntry()
 {
 	date +%d/%m/%y			#Echo the date in DD/MM/YYYY format
 	date +%A			#Echo the day of the Week
+	date +%H:%M			#Echo the current time
 	echo ">>"
 	read -r ENTRY
 	date +%d/%m/%y >> $FILE		#Add date header to log entry
 	date +%A >> $FILE		#Add day-of-week header to log entry
+	date +%H:%M >> $FILE		#Add hour-minute header to log entry
 	echo "$ENTRY" >> $FILE		#Log the actual entry
+	echo >> $FILE
 }
 
 #Function to set a tag preceding an entry
@@ -47,10 +50,11 @@ case "$1" in
 		FILE="$1"
 		recordEntry
 		;;
+	"-r")	#Read the journal as recorded previously
+		cat "$FILE"
+		;;
 	*)	#Default statement if no tags specified
 		echo "Entry for $(date +%d/%m/%y):"
 		recordEntry
 		;;
 esac
-	echo >> $FILE
-	cat $FILE			#Debug - list entire log file.
