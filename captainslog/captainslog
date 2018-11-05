@@ -9,24 +9,36 @@ recordEntry()
 	date +%H:%M			#Echo the current time
 	echo ">>"
 	read -r ENTRY
-	date +%d/%m/%y >> $FILE		#Add date header to log entry
-	date +%A >> $FILE		#Add day-of-week header to log entry
-	date +%H:%M >> $FILE		#Add hour-minute header to log entry
-	echo "$ENTRY" >> $FILE		#Log the actual entry
-	echo >> $FILE
+	date +%d/%m/%y >> "$FILE"		#Add date header to log entry
+	date +%A >> "$FILE"		#Add day-of-week header to log entry
+	date +%H:%M >> "$FILE"		#Add hour-minute header to log entry
+	echo "$ENTRY" >> "$FILE"		#Log the actual entry
+	echo >> "$FILE"
 }
+
+##Decrypt our journal file so we can write to it
+#decrypt()
+#{
+#	gpg --decrypt "$FILE"
+#}
+#
+##Encrypt our journal file now that we have written our entry
+#encrypt()
+#{
+#	gpg --encrypt --recipient "name-goes-here" "$FILE"
+#}
 
 #Function to set a tag preceding an entry
 setTag()
 {
-	echo "TAG=""$TAG" >> $FILE	#Add a tag header to log entry
+	echo "TAG=""$TAG" >> "$FILE"	#Add a tag header to log entry
 	echo "TAG=""$TAG"			#Debug echo
 }
 
 #Function to list entries with specific tag
 listTag()
 {
-	true	#placeholder			#Add function to search for, aggregate and list them 
+	true	#placeholder			#Add function to search for, aggregate and list entries
 }
 
 #Initial default for log file
