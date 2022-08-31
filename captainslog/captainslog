@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -
 # Program to create and maintain a text journal from command line.
 
 #Function to record an entry

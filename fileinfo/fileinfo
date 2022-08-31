@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -
 # Last edit Sun Sep 9 19:33:35 CST 2018
 # Let's look up a file extension from fileinfo.com!
 for i in "$@"
